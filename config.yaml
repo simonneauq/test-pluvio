@@ -1,0 +1,69 @@
+app:
+  title: "Suivi pluviometrie LGV"
+  timezone: "Europe/Paris"
+  history_years: 5
+  sample_if_empty: true
+
+paths:
+  data_root: "data/runtime"
+  communes_xlsx_path: ""
+  lgv_sig_dir: ""
+  lrs_axes_path: ""
+  lrs_pk_path: ""
+  db_path: "data/runtime/lgv_pluviometrie.duckdb"
+
+providers:
+  priority_weather:
+    - "meteofrance"
+    - "open_meteo"
+  open_meteo:
+    enabled: true
+    archive_url: "https://archive-api.open-meteo.com/v1/archive"
+    forecast_url: "https://api.open-meteo.com/v1/forecast"
+  meteofrance:
+    enabled: true
+    base_url: "https://public-api.meteofrance.fr/public"
+    observations_endpoint: "/DPObs/v1/station/horaire"
+    forecast_endpoint: "/DPVigilance/v1/previsions"
+    timeout_seconds: 30
+  hubeau:
+    enabled: true
+    stations_url: "https://hubeau.eaufrance.fr/api/v2/hydrometrie/referentiel/stations"
+    observations_url: "https://hubeau.eaufrance.fr/api/v2/hydrometrie/observations_tr"
+  vigicrues:
+    enabled: true
+    bulletin_url: "https://www.vigicrues.gouv.fr/bulletin_national"
+  hydroportail:
+    enabled: true
+    referential_url: "https://hydro.eaufrance.fr"
+  sandre:
+    enabled: true
+    referential_url: "https://api.sandre.eaufrance.fr/referentiels/v1/"
+
+matching:
+  hydro_station_radius_m: 15000
+  sample_points_per_segment: 1
+  max_hydro_stations_per_segment: 3
+
+thresholds:
+  rain_1h:
+    advisory: 10
+    watch: 20
+    alert: 35
+  rain_24h:
+    advisory: 20
+    watch: 40
+    alert: 60
+  rain_72h:
+    advisory: 40
+    watch: 70
+    alert: 100
+  hydro_level:
+    advisory: 2.0
+    watch: 3.0
+    alert: 4.0
+  official_vigilance:
+    green: 0
+    yellow: 1
+    orange: 2
+    red: 3
